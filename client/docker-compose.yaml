@@ -1,0 +1,14 @@
+version: "3.9"
+
+services:
+    air_quality_web:
+        container_name: air_quality_web
+        build: .
+        ports:
+            - "8080:8080"
+        networks:
+            - server_air_quality_network
+
+networks:
+    server_air_quality_network:
+        external: true
