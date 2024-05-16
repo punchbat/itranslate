@@ -14,9 +14,11 @@ SessionLocal = sessionmaker(
     autocommit=False, autoflush=False, bind=engine, class_=AsyncSession
 )
 
+
 async def get_db():
     async with SessionLocal() as session:
         yield session
+
 
 @asynccontextmanager
 async def get_db_asynccontextmanager():

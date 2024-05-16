@@ -1,8 +1,9 @@
 import logging
-from logging.config import dictConfig
 import os
+from logging.config import dictConfig
 
 import yaml
+
 
 def setup_logger(default_path='src/logger/config.yaml', default_level=logging.INFO):
     path = default_path

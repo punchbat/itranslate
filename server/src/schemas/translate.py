@@ -1,11 +1,14 @@
-from .base import BaseAPIModel
 from datetime import datetime
 from typing import Optional
+
+from .base import BaseAPIModel
+
 
 class TranslateImageRequest(BaseAPIModel):
     name: str
     description: Optional[str] = None
     target_language: str
+
 
 class SensorResponse(BaseAPIModel):
     id: str

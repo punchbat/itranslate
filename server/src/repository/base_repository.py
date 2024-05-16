@@ -10,6 +10,7 @@ from src.models import BaseDBModel
 
 DBModelType = TypeVar("DBModelType", bound=BaseDBModel)
 
+
 class BaseRepository(Generic[DBModelType]):
     def __init__(self, model: Type[DBModelType], session: AsyncSession = Depends(get_db)):
         self.db = session

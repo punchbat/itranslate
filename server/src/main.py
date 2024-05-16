@@ -25,6 +25,7 @@ app.include_router(auth_router, prefix="/api", tags=["Auth"])
 app.include_router(profile_router, prefix="/api", tags=["Profile"])
 app.include_router(translate_router, prefix="/api", tags=["Translate"])
 
+
 @app.get("/ping", tags=["Healthcheck"], response_model=ApiResponse[str])
 def ping():
     return ApiResponse(

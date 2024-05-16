@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Depends, UploadFile, File, Form
 from fastapi.security import OAuth2PasswordBearer
-
 from starlette import status
 
 from src.core import ValidationException
@@ -14,6 +13,7 @@ router = APIRouter(
 )
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
 
 @router.get("/translate", response_model=ApiResponse)
 async def translate_image(

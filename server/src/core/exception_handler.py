@@ -5,7 +5,8 @@ from pydantic import ValidationError
 from starlette.responses import JSONResponse
 from starlette.websockets import WebSocket, WebSocketState
 
-from src.core import BaseApplicationException, NotFoundException, ConflictException, UnauthorizedException, IncorrectSignInException, TokenExpiredException, ValidationException
+from src.core import BaseApplicationException, NotFoundException, ConflictException, UnauthorizedException, \
+    IncorrectSignInException, TokenExpiredException, ValidationException
 
 exceptions_to_status_codes: dict[Type[BaseApplicationException], int] = {
     NotFoundException: status.HTTP_404_NOT_FOUND,
@@ -16,6 +17,7 @@ exceptions_to_status_codes: dict[Type[BaseApplicationException], int] = {
     ValidationException: status.HTTP_403_FORBIDDEN,
     ValidationError: status.HTTP_422_UNPROCESSABLE_ENTITY
 }
+
 
 def add_application_exception_handler(
         application: FastAPI,
@@ -42,6 +44,7 @@ def add_application_exception_handler(
                 "message": str(exception),
             }
         )
+
 
 async def websocket_exception_handler(websocket: WebSocket, exception: BaseApplicationException) -> None:
     if websocket.application_state != WebSocketState.DISCONNECTED:

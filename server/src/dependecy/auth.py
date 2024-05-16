@@ -4,15 +4,15 @@ from pydantic import ValidationError
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.websockets import WebSocket
 
+from src.config import config
 from src.core import get_db, ValidationException, NotFoundException, TokenNotInCookieException
 from src.models import UserModel
-from src.schemas import TokenPayload
-
 from src.repository import UserRepository
+from src.schemas import TokenPayload
 from src.service import JWTService
-from src.config import config
 
 jwt_service = JWTService()
+
 
 def get_token_http(request: Request) -> str:
     token = request.cookies.get(config.AUTH_TOKEN_NAME)
@@ -21,7 +21,9 @@ def get_token_http(request: Request) -> str:
 
     return token
 
-async def get_user_from_token_http(token: str = Depends(get_token_http), db: AsyncSession = Depends(get_db)) -> UserModel:
+
+async def get_user_from_token_http(token: str = Depends(get_token_http),
+                                   db: AsyncSession = Depends(get_db)) -> UserModel:
     try:
         token_payload: TokenPayload = jwt_service.verify_token(token)
     except(jwt.JWTError, ValidationError):
@@ -34,6 +36,7 @@ async def get_user_from_token_http(token: str = Depends(get_token_http), db: Asy
         raise NotFoundException(f"Could not find user with token {token}")
 
     return user
+
 
 async def get_user_from_token_ws(websocket: WebSocket, db: AsyncSession = Depends(get_db)) -> UserModel:
     token = websocket.cookies.get(config.AUTH_TOKEN_NAME)

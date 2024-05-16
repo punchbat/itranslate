@@ -1,18 +1,17 @@
-from fastapi import APIRouter, Depends, Response,Request
+from fastapi import APIRouter, Depends, Response
 from fastapi.security import OAuth2PasswordBearer
-
 from starlette import status
 
-from src.dependecy import get_token_http
+from src.config import config
 from src.schemas import SignUpRequest, SignInRequest
 from src.service import UserService
-from src.config import config
 
 router = APIRouter(
     prefix="/auth/v1"
 )
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
 
 @router.post("/sign-up")
 async def sign_up(user_data: SignUpRequest, user_service: UserService = Depends()):
@@ -30,6 +29,7 @@ async def sign_up(user_data: SignUpRequest, user_service: UserService = Depends(
     )
     return response
 
+
 @router.post("/sign-in")
 async def sign_in(user_data: SignInRequest, user_service: UserService = Depends()):
     access_token = await user_service.sign_in(user_data)
@@ -45,6 +45,7 @@ async def sign_in(user_data: SignInRequest, user_service: UserService = Depends(
         secure=config.AUTH_TOKEN_SECURE
     )
     return response
+
 
 @router.post("/logout")
 async def logout():

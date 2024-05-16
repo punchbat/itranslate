@@ -1,6 +1,7 @@
-from sqlalchemy import Column, String,VARCHAR
+from sqlalchemy import Column, String
 
 from .base_model import BaseDBModel
+
 
 class UserModel(BaseDBModel):
     __tablename__: str = "users"

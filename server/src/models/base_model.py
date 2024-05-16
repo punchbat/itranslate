@@ -5,6 +5,7 @@ from sqlalchemy.orm import Mapped
 
 Base = declarative_base()
 
+
 class BaseDBModel(Base):
     __abstract__ = True
 
