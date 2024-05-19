@@ -4,6 +4,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import { authApi } from "@app/services/auth";
 import { translateApi } from "@app/services/translate";
 import { translationApi } from "@app/services/translation";
+import { languageApi } from "@app/services/language";
 // * компоненты
 import toastsSlice from "@widgets/toasts-renderer/store";
 // * обычные
@@ -16,6 +17,7 @@ export function makeStore() {
             [authApi.reducerPath]: authApi.reducer,
             [translateApi.reducerPath]: translateApi.reducer,
             [translationApi.reducerPath]: translationApi.reducer,
+            [languageApi.reducerPath]: languageApi.reducer,
 
             // * компоненты
             toasts: toastsSlice,
@@ -25,7 +27,12 @@ export function makeStore() {
         },
 
         middleware: getdefaultMiddleware =>
-            getdefaultMiddleware().concat([authApi.middleware, translateApi.middleware, translationApi.middleware]),
+            getdefaultMiddleware().concat([
+                authApi.middleware,
+                translateApi.middleware,
+                translationApi.middleware,
+                languageApi.middleware,
+            ]),
     });
 }
 

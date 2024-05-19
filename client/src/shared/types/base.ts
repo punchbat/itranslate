@@ -32,4 +32,8 @@ interface ITranslation {
     updatedAt: string;
 }
 
-export type { IUser, ITranslation };
+interface ILanguage {
+    [key: string]: string;
+}
+
+export type { IUser, ITranslation, ILanguage };

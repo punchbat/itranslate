@@ -1,49 +1,40 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
-import { useState, useEffect, FC } from "react";
+import { FC } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Typography, Spin, Tabs } from "antd";
+import { Typography, Tabs } from "antd";
 import type { TabsProps } from "antd";
-import { cn } from "@utils";
-import { useGetListSensorQuery } from "@app/services/translate";
 import qs from "qs";
+
+import { cn } from "@utils";
+import { HomePageParams, HomePageTabParams } from "@localtypes";
+import { TabText } from "./ui";
 
 import "./Page.scss";
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 
 const b = cn("home");
-
-type TabParams = "text" | "image";
-
-interface Params {
-    tab?: TabParams;
-    sourceLanguage?: string;
-    targetLanguage?: string;
-}
 
 const Home: FC = function () {
     const navigate = useNavigate();
     const location = useLocation();
 
     const queryObj = qs.parse(location.search.substring(1));
-    const { tab, sourceLanguage, targetLanguage } = queryObj as Params;
-
-    const { data: dataSensors, isLoading } = useGetListSensorQuery();
+    const { tab } = queryObj as HomePageParams;
 
     const items: TabsProps["items"] = [
         {
             key: "text",
             label: "Text",
-            children: "Content of Tab Pane 1",
+            children: <TabText />,
         },
         {
             key: "image",
             label: "Image",
-            children: "Content of Tab Pane 2",
+            children: <TabImage />,
         },
     ];
 
-    const handleTabChange = (key: TabParams) => {
+    const handleTabChange = (key: HomePageTabParams) => {
         navigate({
             pathname: location.pathname,
             search: qs.stringify({ ...queryObj, tab: key }),
@@ -51,10 +42,6 @@ const Home: FC = function () {
     };
 
     const defaultActiveKey = tab.length ? tab : "text";
-
-    if (isLoading) {
-        return <Spin />;
-    }
 
     return (
         <div className={b()}>

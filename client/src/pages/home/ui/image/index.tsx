@@ -14,8 +14,10 @@ type Props = {
     gender: string;
 };
 
-const Avatar: FC<Props> = ({ avatar, gender }) => {
+const TabImage: FC<Props> = ({ avatar, gender }) => {
     const navigate = useNavigate();
+
+    const [translateImage, { isLoading: isTranslateImageLoading }] = useTranslateImageMutation();
 
     const handleGoToProfile = (e: MouseEvent) => {
         e.stopPropagation();
@@ -38,4 +40,4 @@ const Avatar: FC<Props> = ({ avatar, gender }) => {
     );
 };
 
-export { Avatar };
+export { TabImage };
