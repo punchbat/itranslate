@@ -1,5 +1,4 @@
 from fastapi import APIRouter, Depends, Response
-from fastapi.security import OAuth2PasswordBearer
 from starlette import status
 
 from src.config import config
@@ -9,8 +8,6 @@ from src.service import UserService
 router = APIRouter(
     prefix="/auth/v1"
 )
-
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
 @router.post("/sign-up")

@@ -2,48 +2,48 @@ import { createApi } from "@reduxjs/toolkit/query/react";
 import { IUser, SuccessResponse } from "@localtypes";
 import { baseQuery } from "./base";
 
-// * RESPONSES
+export interface SignUpRequest {
+    email: string;
+    password: string;
+    name: string;
+    surname: string;
+}
+
+export interface SignInRequest {
+    email: string;
+    password: string;
+}
+
+export interface UpdateProfieRequest {
+    name: string;
+    surname: string;
+}
+
 export type GetProfileResponse = SuccessResponse<IUser>;
 
-// * REQUESTS
-export interface SignInput {
-    email: string;
-    password: string;
-}
-
-export interface SignUpInput {
-    email: string;
-    password: string;
-    name: string;
-    surname: string;
-}
-
-export interface UpdateProfieInput {
-    name: string;
-    surname: string;
-}
+export const authApiUrl = "/api/auth/v1";
 
 export const authApi = createApi({
     reducerPath: "authApi",
     baseQuery,
     endpoints: builder => ({
-        signUp: builder.mutation<void, SignUpInput>({
-            query: (body: any) => ({
-                url: "/api/auth/v1/sign-up",
+        signUp: builder.mutation<void, SignUpRequest>({
+            query: (body: SignUpRequest) => ({
+                url: `${authApiUrl}/sign-up`,
                 method: "POST",
                 body,
             }),
         }),
-        signIn: builder.mutation<void, SignInput>({
-            query: (body: any) => ({
-                url: "/api/auth/v1/sign-in",
+        signIn: builder.mutation<void, SignInRequest>({
+            query: (body: SignInRequest) => ({
+                url: `${authApiUrl}/sign-in`,
                 method: "POST",
                 body,
             }),
         }),
         logout: builder.mutation<void, void>({
             query: () => ({
-                url: "/api/auth/v1/logout",
+                url: `${authApiUrl}/logout`,
                 method: "POST",
             }),
         }),
@@ -53,8 +53,8 @@ export const authApi = createApi({
                 method: "GET",
             }),
         }),
-        updateProfile: builder.mutation<void, UpdateProfieInput>({
-            query: (body: any) => ({
+        updateProfile: builder.mutation<void, UpdateProfieRequest>({
+            query: (body: UpdateProfieRequest) => ({
                 url: "/api/profile/v1/update-profile",
                 method: "POST",
                 body,

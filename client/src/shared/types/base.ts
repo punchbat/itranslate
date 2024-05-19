@@ -7,35 +7,29 @@ interface IUser {
     updatedAt: string;
 }
 
-interface ISensor {
+enum ETranslationStatus {
+    UNPROCESSED = "unprocessed",
+    PROCESSING = "processing",
+    TRANSLATED = "translated",
+    ERROR = "error",
+}
+
+enum ETranslationType {
+    TEXT = "text",
+    IMAGE = "image",
+}
+
+interface ITranslation {
     id: string;
-    sgid: string;
-    name: string;
-    description: string;
-    latitude: number;
-    longitude: number;
+    status: ETranslationStatus;
+    type: ETranslationType;
+    path?: string;
+    sourceLanguage: string;
+    sourceText: string;
+    targetLanguage: string;
+    translatedText?: string;
     createdAt: string;
     updatedAt: string;
 }
 
-interface ISensorData {
-    id: string;
-    sensorId: string;
-    temperature: number;
-    humidity: number;
-    CO2: number;
-    latitude: number;
-    longitude: number;
-    createdAt: string;
-    updatedAt: string;
-}
-
-interface IWebsocketSensorData {
-    sgid: string;
-    temperature: number;
-    humidity: number;
-    CO2: number;
-    timestamp: number;
-}
-
-export type { IUser, ISensor, ISensorData, IWebsocketSensorData };
+export type { IUser, ITranslation };

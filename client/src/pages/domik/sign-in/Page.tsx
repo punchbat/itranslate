@@ -4,7 +4,7 @@ import { Button, Form, Input, Typography, Spin } from "antd";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { cn } from "@utils";
 
-import { useSignInMutation, SignInput } from "@app/services/auth";
+import { useSignInMutation, SignInRequest } from "@app/services/auth";
 import { useAppDispatch } from "@hooks/index";
 import { ToastStore } from "@widgets/index";
 import { FailResponse } from "@localtypes";
@@ -21,7 +21,7 @@ const SignIn: FC = function () {
 
     const [signIn, { isLoading: isSignInLoading }] = useSignInMutation();
 
-    const onFinish = async (values: SignInput) => {
+    const onFinish = async (values: SignInRequest) => {
         try {
             await signIn(values).unwrap();
             navigate("/");

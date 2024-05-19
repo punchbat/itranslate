@@ -5,7 +5,7 @@ import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { cn } from "@utils";
 
 import { FailResponse } from "@localtypes";
-import { SignUpInput, useSignUpMutation } from "@app/services/auth";
+import { SignUpRequest, useSignUpMutation } from "@app/services/auth";
 import { useAppDispatch } from "@hooks/index";
 import { ToastStore } from "@widgets/index";
 
@@ -21,7 +21,7 @@ const SignUp: FC = function () {
 
     const [signUp, { isLoading: isSignUpLoading }] = useSignUpMutation();
 
-    const onFinish = async (values: SignUpInput) => {
+    const onFinish = async (values: SignUpRequest) => {
         try {
             await signUp(values).unwrap();
             navigate("/");

@@ -3,9 +3,8 @@ from typing import Type
 from fastapi import FastAPI, Response, status
 from pydantic import ValidationError
 from starlette.responses import JSONResponse
-from starlette.websockets import WebSocket, WebSocketState
 
-from src.core import BaseApplicationException, NotFoundException, ConflictException, UnauthorizedException, \
+from .exceptions import BaseApplicationException, NotFoundException, ConflictException, UnauthorizedException, \
     IncorrectSignInException, TokenExpiredException, ValidationException
 
 exceptions_to_status_codes: dict[Type[BaseApplicationException], int] = {
@@ -44,12 +43,3 @@ def add_application_exception_handler(
                 "message": str(exception),
             }
         )
-
-
-async def websocket_exception_handler(websocket: WebSocket, exception: BaseApplicationException) -> None:
-    if websocket.application_state != WebSocketState.DISCONNECTED:
-        await websocket.send_json({
-            "error": str(exception),
-            "code": exceptions_to_status_codes.get(type(exception), 500)
-        })
-        await websocket.close(code=status.HTTP_400_BAD_REQUEST)

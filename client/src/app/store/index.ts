@@ -2,8 +2,8 @@ import { configureStore } from "@reduxjs/toolkit";
 
 // * сервисы
 import { authApi } from "@app/services/auth";
-import { sensorApi } from "@app/services/sensor";
-import { sensorDataApi } from "@app/services/sensor-data";
+import { translateApi } from "@app/services/translate";
+import { translationApi } from "@app/services/translation";
 // * компоненты
 import toastsSlice from "@widgets/toasts-renderer/store";
 // * обычные
@@ -14,8 +14,8 @@ export function makeStore() {
         reducer: {
             // * сервисы
             [authApi.reducerPath]: authApi.reducer,
-            [sensorApi.reducerPath]: sensorApi.reducer,
-            [sensorDataApi.reducerPath]: sensorDataApi.reducer,
+            [translateApi.reducerPath]: translateApi.reducer,
+            [translationApi.reducerPath]: translationApi.reducer,
 
             // * компоненты
             toasts: toastsSlice,
@@ -25,7 +25,7 @@ export function makeStore() {
         },
 
         middleware: getdefaultMiddleware =>
-            getdefaultMiddleware().concat([authApi.middleware, sensorApi.middleware, sensorDataApi.middleware]),
+            getdefaultMiddleware().concat([authApi.middleware, translateApi.middleware, translationApi.middleware]),
     });
 }
 

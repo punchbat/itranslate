@@ -1,3 +1,3 @@
 from .base_model import BaseDBModel
-from .image_model import ImageModel
+from .translation_model import TranslationModel, TranslationStatus, TranslationType
 from .user_model import UserModel

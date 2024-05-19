@@ -1,2 +1,2 @@
-from .image_repository import ImageRepository
+from .translation_repository import TranslationRepository
 from .user_repository import UserRepository

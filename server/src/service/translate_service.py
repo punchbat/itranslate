@@ -2,17 +2,13 @@ import io
 import logging
 import uuid
 
-import cv2 as cv
-import numpy as np
-import pytesseract
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image
 from fastapi import Depends
-from googletrans import Translator
-from langdetect import detect
 
-from src.models.image_model import ImageStatus
-from src.repository import ImageRepository
-from src.schemas import TranslateImageRequest
+from src.core import TranslateManager
+from src.models import TranslationStatus, TranslationType
+from src.repository import TranslationRepository
+from src.schemas import TranslateImageRequest, TranslationResponse, TranslateTextRequest
 
 logger = logging.getLogger(__name__)
 
@@ -20,66 +16,80 @@ logger = logging.getLogger(__name__)
 class TranslateService:
     def __init__(
             self,
-            image_repository: ImageRepository = Depends(ImageRepository),
+            translate_manager: TranslateManager = Depends(TranslateManager),
+            translation_repository: TranslationRepository = Depends(TranslationRepository),
     ):
-        self.image_repository = image_repository
+        self.text_manager = translate_manager
+        self.translation_repository = translation_repository
 
-    def extract_text(self, image_bytes):
-        image = Image.open(io.BytesIO(image_bytes))
-        image_np = np.array(image)
+    async def translate_text(self, translate_request: TranslateTextRequest) -> TranslationResponse:
+        src_lang = translate_request.sourceLanguage
+        if len(translate_request.sourceLanguage) == 0:
+            src_lang = self.translate_manager.detect_language(translate_request.sourceText)
+        print("src_lang: ", src_lang)
 
-        gray_image = cv.cvtColor(image_np, cv.COLOR_BGR2GRAY)
+        translated_text = self.translate_manager.translate_text(translate_request.sourceText, src_lang,
+                                                                translate_request.targetLanguage)
+        print("translated text: ", translated_text)
 
-        threshold_img = cv.threshold(gray_image, 0, 255, cv.THRESH_BINARY + cv.THRESH_OTSU)[1]
+        entityUuid = uuid.uuid4()
+        await self.translation_repository.create(
+            id=entityUuid,
+            status=TranslationStatus.TRANSLATED,
+            type=TranslationType.TEXT,
+            source_language=src_lang,
+            source_text=translate_request.sourceText,
+            target_language=translate_request.targetLanguage,
+            translated_text=translated_text,
+        )
 
-        text = pytesseract.image_to_string(threshold_img)
-        return text
+        return TranslationResponse(
+            id=str(entityUuid),
+            status=TranslationStatus.TRANSLATED,
+            type=TranslationType.TEXT,
+            sourceLanguage=src_lang,
+            sourceText=translate_request.sourceText,
+            targetLanguage=translate_request.targetLanguage,
+            translatedText=translated_text,
+        )
 
-    def detect_language(self, text):
-        try:
-            language = detect(text)
-            return language
-        except:
-            return 'unknown'
+    async def translate_image(self, translate_request: TranslateImageRequest) -> TranslationResponse:
+        text = self.translate_manager.extract_text(translate_request.imageData)
+        print("extracted text: ", text)
 
-    def translate_text(self, text, src_lang, target_language):
-        translator = Translator()
-        translated = translator.translate(text, src=src_lang, dest=target_language)
-        return translated.text
+        src_lang = translate_request.sourceLanguage
+        if len(translate_request.sourceLanguage) == 0:
+            src_lang = self.translate_manager.detect_language(translate_request.sourceText)
+        print("src_lang: ", src_lang)
 
-    async def translate_image(self, image_data: bytes, request_data: TranslateImageRequest) -> bytes:
-        text = self.extract_text(image_data)
-        src_lang = self.detect_language(text)
-        translated_text = self.translate_text(text, src_lang, request_data.target_language)
-        final_image = self.overlay_text_on_image(image_data, translated_text)
+        translated_text = self.translate_manager.translate_text(text, src_lang, translate_request.targetLanguage)
+        print("translated text: ", translated_text)
 
-        saved_path = f"path/to/saved/{uuid.uuid4()}"
+        final_image = self.translate_manager.overlay_text_on_image(translate_request.imageData, translated_text)
+
+        saved_path = f"static/uploads/translated_images/{uuid.uuid4()}.png"
         image = Image.open(io.BytesIO(final_image))
         image.save(saved_path, format='PNG')
 
-        await self.image_repository.create(
+        entityUuid = uuid.uuid4()
+        await self.translation_repository.create(
+            id=entityUuid,
+            status=TranslationStatus.TRANSLATED,
+            type=TranslationType.IMAGE,
             path=saved_path,
-            name=request_data.name,
-            description=request_data.description,
             source_language=src_lang,
-            target_language=request_data.target_language,
-            status=ImageStatus.TRANSLATED
+            source_text=text,
+            target_language=translate_request.targetLanguage,
+            translated_text=translated_text,
         )
 
-        return final_image
-
-    def overlay_text_on_image(self, image_bytes, text):
-        image = Image.open(io.BytesIO(image_bytes))
-        draw = ImageDraw.Draw(image)
-        font = ImageFont.load_default()
-        text_width, text_height = draw.textsize(text, font)
-
-        width, height = image.size
-        x = (width - text_width) / 2
-        y = (height - text_height) / 2
-        draw.text((x, y), text, font=font, fill=(255, 255, 255))
-
-        img_byte_arr = io.BytesIO()
-        image.save(img_byte_arr, format='PNG')
-        img_byte_arr = img_byte_arr.getvalue()
-        return img_byte_arr
+        return TranslationResponse(
+            id=str(entityUuid),
+            status=TranslationStatus.TRANSLATED,
+            type=TranslationType.IMAGE,
+            path=saved_path,
+            sourceLanguage=src_lang,
+            sourceText=text,
+            targetLanguage=translate_request.targetLanguage,
+            translatedText=translated_text,
+        )

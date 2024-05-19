@@ -1,11 +1,11 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { useState, useEffect, FC } from "react";
-import { Typography, Spin } from "antd";
-import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis } from "recharts";
-import { IWebsocketSensorData } from "@localtypes";
-import { format } from "date-fns";
+import { useNavigate, useLocation } from "react-router-dom";
+import { Typography, Spin, Tabs } from "antd";
+import type { TabsProps } from "antd";
 import { cn } from "@utils";
-import { useGetListSensorQuery } from "@app/services/sensor";
+import { useGetListSensorQuery } from "@app/services/translate";
+import qs from "qs";
 
 import "./Page.scss";
 
@@ -13,64 +13,44 @@ const { Title, Text } = Typography;
 
 const b = cn("home");
 
-const WebSocketURL = "ws://localhost:8000/api/sensor-data/v1/ws";
-const MAX_DATA_POINTS = 50; // Максимальное количество точек данных для каждого сенсора
+type TabParams = "text" | "image";
+
+interface Params {
+    tab?: TabParams;
+    sourceLanguage?: string;
+    targetLanguage?: string;
+}
 
 const Home: FC = function () {
-    const [dataMap, setDataMap] = useState<Record<string, Array<IWebsocketSensorData>>>({});
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    const queryObj = qs.parse(location.search.substring(1));
+    const { tab, sourceLanguage, targetLanguage } = queryObj as Params;
 
     const { data: dataSensors, isLoading } = useGetListSensorQuery();
 
-    useEffect(() => {
-        const ws = new WebSocket(WebSocketURL);
+    const items: TabsProps["items"] = [
+        {
+            key: "text",
+            label: "Text",
+            children: "Content of Tab Pane 1",
+        },
+        {
+            key: "image",
+            label: "Image",
+            children: "Content of Tab Pane 2",
+        },
+    ];
 
-        ws.onopen = () => {
-            console.log("WebSocket Connected");
-        };
+    const handleTabChange = (key: TabParams) => {
+        navigate({
+            pathname: location.pathname,
+            search: qs.stringify({ ...queryObj, tab: key }),
+        });
+    };
 
-        ws.onmessage = (event: { data: string }) => {
-            console.log("Message from server ", event.data);
-            if (event.data === "ping") {
-                return;
-            }
-
-            try {
-                let newData = JSON.parse(event.data);
-                if (typeof newData === "string") {
-                    newData = JSON.parse(newData);
-
-                    if (typeof newData === "string") {
-                        newData = JSON.parse(newData);
-                    }
-                }
-                const timestamp = new Date().getTime();
-                const dataWithTimestamp: IWebsocketSensorData = { ...newData, timestamp };
-                setDataMap(currentDataMap => {
-                    const currentData = currentDataMap[newData.sgid] || [];
-                    const newDataArray = [...currentData, dataWithTimestamp].slice(-MAX_DATA_POINTS); // Оставляем только последние MAX_DATA_POINTS элементов
-
-                    return {
-                        ...currentDataMap,
-                        [newData.sgid]: newDataArray,
-                    };
-                });
-            } catch (e) {
-                console.log(event.data, e);
-            }
-        };
-
-        ws.onclose = event => {
-            console.log("WebSocket Disconnected", event.reason);
-        };
-
-        ws.onerror = error => {
-            console.error("WebSocket Error ", error);
-        };
-
-        return () => {
-            ws.close();
-        };
-    }, []);
+    const defaultActiveKey = tab.length ? tab : "text";
 
     if (isLoading) {
         return <Spin />;
@@ -80,44 +60,10 @@ const Home: FC = function () {
         <div className={b()}>
             <div className={b("inner")}>
                 <div className={b("title")}>
-                    <Title level={1}>Real-Time Air Quality</Title>
+                    <Title level={1}>Translate</Title>
                 </div>
                 <div className={b("content")}>
-                    <div className={b("items")}>
-                        {dataSensors?.payload.map((sensor, index) => (
-                            // eslint-disable-next-line react/no-array-index-key, @typescript-eslint/restrict-plus-operands
-                            <div className={b("item")} key={sensor.id + index}>
-                                <div className={b("item_title")} key={sensor.id}>
-                                    <Text>
-                                        sgid: {sensor.sgid}; Name: {sensor.name};
-                                    </Text>
-                                </div>
-                                <div className={b("chart")} key={sensor.id}>
-                                    <ResponsiveContainer width="100%" height={300}>
-                                        <LineChart data={dataMap[sensor.sgid]}>
-                                            <CartesianGrid strokeDasharray="3 3" />
-                                            <XAxis
-                                                dataKey="timestamp"
-                                                tickFormatter={(unixTime: number | string | Date) =>
-                                                    format(new Date(unixTime), "yyyy-MM-dd HH:mm:ss")
-                                                }
-                                            />
-                                            <Tooltip />
-                                            <Legend />
-                                            <Line
-                                                type="monotone"
-                                                dataKey="temperature"
-                                                stroke="#8884d8"
-                                                activeDot={{ r: 8 }}
-                                            />
-                                            <Line type="monotone" dataKey="humidity" stroke="#82ca9d" />
-                                            <Line type="monotone" dataKey="CO2" stroke="#ffc658" />
-                                        </LineChart>
-                                    </ResponsiveContainer>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+                    <Tabs defaultActiveKey={defaultActiveKey} items={items} onChange={handleTabChange} />
                 </div>
             </div>
         </div>

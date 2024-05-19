@@ -13,3 +13,4 @@ from .exceptions import (
     TokenNotInCookieException
 )
 from .security import verify_password, get_password_hash
+from .translate_manager import TranslateManager

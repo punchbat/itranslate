@@ -1,21 +1,15 @@
-from datetime import datetime
 from typing import Optional
 
 from .base import BaseAPIModel
 
 
+class TranslateTextRequest(BaseAPIModel):
+    sourceLanguage: Optional[str] = None
+    sourceText: str
+    targetLanguage: str
+
+
 class TranslateImageRequest(BaseAPIModel):
-    name: str
-    description: Optional[str] = None
-    target_language: str
-
-
-class SensorResponse(BaseAPIModel):
-    id: str
-    sgid: str
-    name: str
-    description: str
-    latitude: float
-    longitude: float
-    createdAt: Optional[datetime] = None
-    updatedAt: Optional[datetime] = None
+    imageData: bytes
+    sourceLanguage: Optional[str] = None
+    targetLanguage: str

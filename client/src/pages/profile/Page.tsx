@@ -6,7 +6,7 @@ import { SaveOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 
 import { cn } from "@utils";
 import {
-    UpdateProfieInput,
+    UpdateProfieRequest,
     useGetMyProfileQuery,
     useLogoutMutation,
     useUpdateProfileMutation,
@@ -60,7 +60,7 @@ const Profile: FC = function () {
         return true;
     };
 
-    const onFinish = async (values: UpdateProfieInput) => {
+    const onFinish = async (values: UpdateProfieRequest) => {
         try {
             await updateProfile(values).unwrap();
         } catch (err) {
