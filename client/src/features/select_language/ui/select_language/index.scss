@@ -1,0 +1,17 @@
+.selectlanguage {
+    height: 50px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &__inner {
+        display: grid;
+        grid-template-columns: repeat(3, auto);
+        column-gap: 4px;
+
+        & > .ant-select {
+            width: 580px !important;
+        }
+    }
+}

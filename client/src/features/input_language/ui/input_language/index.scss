@@ -1,0 +1,48 @@
+.inputlanguage {
+    &__inner {
+        display: grid;
+        grid-template-columns: repeat(2, 600px);
+        justify-content: center;
+        align-items: self-start;
+        column-gap: 4px;
+    }
+
+    &__input {
+        position: relative;
+
+        & > .ant-input {
+            padding-right: 40px !important;
+            padding-bottom: 40px !important;
+        }
+    }
+
+    &__count {
+        position: absolute;
+        bottom: 4px;
+        right: 14px;
+    }
+
+    &__suggest {
+        position: absolute;
+        bottom: 4px;
+        left: 14px;
+    }
+
+    &__clear {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+    }
+
+    &__input_bottom {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    &__copy {
+        position: absolute;
+        bottom: 4px;
+        right: 4px;
+    }
+}

@@ -17,7 +17,7 @@ const Header: FC = () => {
                 <div className={b("app")}>
                     <AppLogo />
 
-                    <Text strong>ITranslate for People</Text>
+                    <Text strong>Translate for People</Text>
                 </div>
 
                 <div className={b("user")}>

@@ -19,7 +19,7 @@ class TranslateService:
             translate_manager: TranslateManager = Depends(TranslateManager),
             translation_repository: TranslationRepository = Depends(TranslationRepository),
     ):
-        self.text_manager = translate_manager
+        self.translate_manager = translate_manager
         self.translation_repository = translation_repository
 
     async def translate_text(self, translate_request: TranslateTextRequest) -> TranslationResponse:

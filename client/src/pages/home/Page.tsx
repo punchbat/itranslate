@@ -6,7 +6,7 @@ import qs from "qs";
 
 import { cn } from "@utils";
 import { HomePageParams, HomePageTabParams } from "@localtypes";
-import { TabText } from "./ui";
+import { TabImage, TabText } from "./ui";
 
 import "./Page.scss";
 
@@ -41,7 +41,7 @@ const Home: FC = function () {
         });
     };
 
-    const defaultActiveKey = tab.length ? tab : "text";
+    const defaultActiveKey = tab?.length ? tab : "text";
 
     return (
         <div className={b()}>

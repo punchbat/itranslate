@@ -36,4 +36,9 @@ interface ILanguage {
     [key: string]: string;
 }
 
-export type { IUser, ITranslation, ILanguage };
+interface ILanguageSuggest {
+    code: string;
+    name: string;
+}
+
+export type { IUser, ITranslation, ILanguage, ILanguageSuggest };

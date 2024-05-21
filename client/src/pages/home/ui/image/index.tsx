@@ -1,41 +1,35 @@
-import { MouseEvent, FC } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, FC } from "react";
+import { Spin, Typography } from "antd";
 
+import { useTranslateTextMutation } from "@app/services/translate";
 import { cn } from "@utils";
-// import { IUser } from "@localtypes";
+import { SelectLanguage } from "@features/index";
 
 import "./index.scss";
 
-const b = cn("avatar");
+const { Title, Text } = Typography;
 
-type Props = {
-    // _id: string;
-    avatar: string;
-    gender: string;
-};
+const b = cn("text");
 
-const TabImage: FC<Props> = ({ avatar, gender }) => {
-    const navigate = useNavigate();
+const TabImage: FC = () => {
+    const [sourceLanguage, setSourceLanguage] = useState<string>();
+    const [targetLanguage, setTargetLanguage] = useState<string>();
 
-    const [translateImage, { isLoading: isTranslateImageLoading }] = useTranslateImageMutation();
-
-    const handleGoToProfile = (e: MouseEvent) => {
-        e.stopPropagation();
-        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions, no-underscore-dangle
-        navigate(`/profile`);
-    };
+    const [translateText, { isLoading: isTranslateTextLoading }] = useTranslateTextMutation();
 
     return (
-        // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
-        <div className={b()} onClick={handleGoToProfile}>
-            <img
-                src={
-                    avatar && avatar.length
-                        ? `${import.meta.env.VITE_API_URL}/uploads/avatars/${avatar}`
-                        : `/assets/user/${gender}.png`
-                }
-                alt="User avatar"
-            />
+        <div className={b()}>
+            <div className={b("inner")}>
+                <div className={b("top")}>
+                    <SelectLanguage
+                        sourceLanguage={sourceLanguage}
+                        setSourceLanguage={setSourceLanguage}
+                        targetLanguage={targetLanguage}
+                        setTargetLanguage={setTargetLanguage}
+                    />
+                </div>
+                <div className={b("content")}>content</div>
+            </div>
         </div>
     );
 };

@@ -21,12 +21,12 @@ async def translate_image(
         translate_service: TranslateService = Depends()
 ):
     if len(translate_request.sourceText) == 0:
-        raise ValidationException("Text must be")
+        raise ValidationException("Text must not be empty")
 
-    translation_response = await translate_service.translate_text(translate_request)
+    response = await translate_service.translate_text(translate_request)
     return ApiResponse(
         status=status.HTTP_200_OK,
-        payload=translation_response
+        payload=response
     )
 
 
@@ -48,8 +48,8 @@ async def translate_image(
         targetLanguage=targetLanguage
     )
 
-    translation_response = await translate_service.translate_image(translate_request)
+    response = await translate_service.translate_image(translate_request)
     return ApiResponse(
         status=status.HTTP_200_OK,
-        payload=translation_response
+        payload=response
     )
