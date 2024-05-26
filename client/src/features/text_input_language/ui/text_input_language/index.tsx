@@ -5,7 +5,7 @@ import { CopyOutlined } from "@ant-design/icons";
 import qs from "qs";
 
 import { useAppDispatch } from "@hooks/index";
-import { cn, debounce } from "@utils";
+import { cn } from "@utils";
 import { FailResponse, ILanguageSuggest, QueryLanguageKeyEnum } from "@localtypes";
 import { TranslateTextRequest, useTranslateTextMutation } from "@app/services/translate";
 import { ToastStore } from "@widgets/index";
@@ -16,18 +16,20 @@ import "./index.scss";
 const { Text } = Typography;
 const { TextArea } = Input;
 
-const b = cn("inputlanguage");
+const b = cn("textinputlanguage");
 
 interface Props {
     sourceLanguage?: string;
     targetLanguage?: string;
 }
 
-const InputLanguage: FC<Props> = ({ sourceLanguage, targetLanguage }) => {
+const TextInputLanguage: FC<Props> = ({ sourceLanguage, targetLanguage }) => {
     const navigate = useNavigate();
     const location = useLocation();
 
     const dispatch = useAppDispatch();
+
+    const [typingTimeout, setTypingTimeout] = useState<NodeJS.Timeout | null>(null);
 
     const [sourceText, setSourceText] = useState("");
     const [sourceTextLength, setSourceTextLength] = useState(0);
@@ -38,15 +40,15 @@ const InputLanguage: FC<Props> = ({ sourceLanguage, targetLanguage }) => {
 
     const [languageSuggest, { isLoading: isLoadingLanguageSuggest }] = useLanguageSuggestMutation();
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     const translate = useCallback(
-        // eslint-disable-next-line @typescript-eslint/require-await
-        debounce(async () => {
-            if (!sourceText || !sourceText?.length || !targetLanguage?.length) return;
+        async (text?: string) => {
+            const localSourceText = text || sourceText;
+
+            if (!localSourceText || !localSourceText?.length || !targetLanguage?.length) return;
 
             const body: TranslateTextRequest = {
                 sourceLanguage,
-                sourceText,
+                sourceText: localSourceText,
                 targetLanguage,
             };
 
@@ -66,7 +68,7 @@ const InputLanguage: FC<Props> = ({ sourceLanguage, targetLanguage }) => {
                     }),
                 );
             }
-        }, 1000),
+        },
         [translateText, sourceText, sourceLanguage, targetLanguage, dispatch],
     );
 
@@ -85,10 +87,19 @@ const InputLanguage: FC<Props> = ({ sourceLanguage, targetLanguage }) => {
     const handleChangeText = (e: ChangeEvent<HTMLTextAreaElement>) => {
         setSourceText(e.target.value);
         setSourceTextLength(e.target.value.length);
-        if (e.target.value) {
-            suggestLanguageFromText(e.target.value);
-            translate();
+
+        if (typingTimeout) {
+            clearTimeout(typingTimeout);
         }
+
+        setTypingTimeout(
+            setTimeout(() => {
+                if (e.target.value) {
+                    suggestLanguageFromText(e.target.value);
+                    translate(e.target.value);
+                }
+            }, 900),
+        );
     };
 
     const handleClearText = () => {
@@ -189,4 +200,4 @@ const InputLanguage: FC<Props> = ({ sourceLanguage, targetLanguage }) => {
     );
 };
 
-export { InputLanguage };
+export { TextInputLanguage };

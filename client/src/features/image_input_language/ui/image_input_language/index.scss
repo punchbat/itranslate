@@ -1,0 +1,48 @@
+.imageinputlanguage {
+    &__inner {
+        padding-bottom: 80px;
+        display: grid;
+        grid-template-columns: repeat(1, 600px);
+        grid-template-rows: repeat(3, max-content);
+        justify-content: center;
+        align-items: self-start;
+        row-gap: 8px;
+    }
+
+    &__upload {
+        & .ant-upload-list {
+            & > .ant-upload-select {
+                width: 600px !important;
+                height: 600px !important;
+            }
+
+            & > .ant-upload-list-item-container {
+                width: 600px !important;
+                height: 600px !important;
+            }
+        }
+    }
+
+    &__input {
+        position: relative;
+
+        & > .ant-input {
+            padding-right: 40px !important;
+            padding-bottom: 40px !important;
+        }
+    }
+
+    &__text {
+        display: grid;
+        grid-template-columns: repeat(2, 300px);
+        justify-content: center;
+        align-items: self-start;
+        column-gap: 4px;
+    }
+
+    &__action {
+    }
+
+    &__copy {
+    }
+}

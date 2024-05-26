@@ -16,13 +16,20 @@ const { Option } = Select;
 const b = cn("selectlanguage");
 
 interface Props {
+    disableSource?: boolean;
     sourceLanguage: string;
     setSourceLanguage: Dispatch<SetStateAction<string>>;
     targetLanguage: string;
     setTargetLanguage: Dispatch<SetStateAction<string>>;
 }
 
-const SelectLanguage: FC<Props> = ({ sourceLanguage, setSourceLanguage, targetLanguage, setTargetLanguage }) => {
+const SelectLanguage: FC<Props> = ({
+    disableSource,
+    sourceLanguage,
+    setSourceLanguage,
+    targetLanguage,
+    setTargetLanguage,
+}) => {
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -80,28 +87,37 @@ const SelectLanguage: FC<Props> = ({ sourceLanguage, setSourceLanguage, targetLa
             {isLoading ? (
                 <Spin />
             ) : Object.keys(languagesMap).length ? (
-                <div className={b("inner")}>
-                    <Select
-                        size="large"
-                        showSearch
-                        value={sourceLanguage}
-                        style={{ width: 200 }}
-                        placeholder="Select source language"
-                        onChange={value => handleLanguageChange(QueryLanguageKeyEnum.SOURCE_LANGUAGE, value)}
-                        optionFilterProp="children"
-                        filterOption={(input, option: any) =>
-                            option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                        }
-                    >
-                        {Object.entries(languagesMap).map(([short, long]) => {
-                            return (
-                                <Option key={short} value={short}>
-                                    {long}
-                                </Option>
-                            );
-                        })}
-                    </Select>
-                    <Button size="large" icon={<SwapOutlined />} onClick={handleSwapLanguages} />
+                <div
+                    className={b("inner", {
+                        disablesource: disableSource,
+                    })}
+                >
+                    {!disableSource ? (
+                        <>
+                            <Select
+                                size="large"
+                                showSearch
+                                value={sourceLanguage}
+                                style={{ width: 200 }}
+                                placeholder="Select source language"
+                                onChange={value => handleLanguageChange(QueryLanguageKeyEnum.SOURCE_LANGUAGE, value)}
+                                optionFilterProp="children"
+                                filterOption={(input, option: any) =>
+                                    option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                }
+                            >
+                                {Object.entries(languagesMap).map(([short, long]) => {
+                                    return (
+                                        <Option key={short} value={short}>
+                                            {long}
+                                        </Option>
+                                    );
+                                })}
+                            </Select>
+
+                            <Button size="large" icon={<SwapOutlined />} onClick={handleSwapLanguages} />
+                        </>
+                    ) : null}
                     <Select
                         size="large"
                         showSearch

@@ -1,7 +1,7 @@
 import { useState, FC } from "react";
 
 import { cn } from "@utils";
-import { InputLanguage, SelectLanguage } from "@features/index";
+import { TextInputLanguage, SelectLanguage } from "@features/index";
 
 import "./index.scss";
 
@@ -23,7 +23,7 @@ const TabText: FC = () => {
                     />
                 </div>
                 <div className={b("content")}>
-                    <InputLanguage sourceLanguage={sourceLanguage} targetLanguage={targetLanguage} />
+                    <TextInputLanguage sourceLanguage={sourceLanguage} targetLanguage={targetLanguage} />
                 </div>
             </div>
         </div>

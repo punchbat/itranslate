@@ -14,6 +14,9 @@ pytesseract.pytesseract.tesseract_cmd = r'D:\Tesseract-OCR\tesseract.exe'
 
 
 class TranslateManager:
+    def __init__(self):
+        self.translator = Translator()
+
     def extract_text(self, image_bytes):
         image = Image.open(io.BytesIO(image_bytes))
         image_np = np.array(image)
@@ -32,36 +35,13 @@ class TranslateManager:
         except:
             return 'unknown'
 
-    def translate_text(self, text, src_lang, target_lang):
-        translator = Translator()
-        translated = translator.translate(text, src=src_lang, dest=target_lang)
-        return translated.text
 
-        # def overlay_text_on_image(self, image_bytes, text):
-        #     image = Image.open(io.BytesIO(image_bytes))
-        #     draw = ImageDraw.Draw(image)
-        #
-        #     # Load the default font or a specific font
-        #     font = ImageFont.load_default()
-        #
-        #     # Determine the size and position of the text on the image
-        #     # Calculate bounding box for the text
-        #     width, height = image.size
-        #     text_bbox = draw.textbbox((0, 0), text, font=font)  # Top-left corner as origin
-        #     text_width = text_bbox[2] - text_bbox[0]  # Right x - Left x
-        #     text_height = text_bbox[3] - text_bbox[1]  # Lower y - Upper y
-        #
-        #     # Calculate position to center the text
-        #     x = (width - text_width) / 2
-        #     y = (height - text_height) / 2
-        #
-        #     # Draw the text centered on the image
-        #     draw.text((x, y), text, font=font, fill=(255, 255, 255))
-        #
-        #     # Save the image into a byte array for further processing or transmission
-        #     img_byte_arr = io.BytesIO()
-        #     image.save(img_byte_arr, format='PNG')
-        #     return img_byte_arr.getvalue()
+    def translate_text(self, text, src_lang, target_lang):
+        if not text.strip():
+            return ''
+
+        translated = self.translator.translate(text, src=src_lang, dest=target_lang)
+        return translated.text
 
     def overlay_text_on_image(self, image_bytes, text, font_path="arial.ttf", initial_font_size=20):
         image = Image.open(io.BytesIO(image_bytes))

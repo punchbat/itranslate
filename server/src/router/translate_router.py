@@ -33,7 +33,6 @@ async def translate_image(
 @router.post("/image", response_model=ApiResponse)
 async def translate_image(
         image: UploadFile = File(...),
-        sourceLanguage: Optional[str] = Form(None),
         targetLanguage: str = Form(...),
         _: UserModel = Depends(get_user_from_token_http),
         translate_service: TranslateService = Depends()
@@ -44,7 +43,6 @@ async def translate_image(
     image_data = await image.read()
     translate_request = TranslateImageRequest(
         imageData=image_data,
-        sourceLanguage=sourceLanguage,
         targetLanguage=targetLanguage
     )
 

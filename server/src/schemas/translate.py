@@ -11,5 +11,4 @@ class TranslateTextRequest(BaseAPIModel):
 
 class TranslateImageRequest(BaseAPIModel):
     imageData: bytes
-    sourceLanguage: Optional[str] = None
     targetLanguage: str

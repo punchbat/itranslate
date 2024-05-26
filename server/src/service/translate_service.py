@@ -55,15 +55,13 @@ class TranslateService:
 
     async def translate_image(self, translate_request: TranslateImageRequest) -> TranslationResponse:
         text = self.translate_manager.extract_text(translate_request.imageData)
-        print("extracted text: ", text)
+        print("extracted: ", text)
 
-        src_lang = translate_request.sourceLanguage
-        if len(translate_request.sourceLanguage) == 0:
-            src_lang = self.translate_manager.detect_language(translate_request.sourceText)
+        src_lang = self.translate_manager.detect_language(text)
         print("src_lang: ", src_lang)
 
         translated_text = self.translate_manager.translate_text(text, src_lang, translate_request.targetLanguage)
-        print("translated text: ", translated_text)
+        print("translated: ", translated_text)
 
         final_image = self.translate_manager.overlay_text_on_image(translate_request.imageData, translated_text)
 

@@ -13,5 +13,11 @@
         & > .ant-select {
             width: 580px !important;
         }
+
+        &_disablesource {
+            & > .ant-select {
+                width: 600px !important;
+            }
+        }
     }
 }
